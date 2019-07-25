@@ -4,7 +4,7 @@ import random
 import aiohttp
 import asyncio
 
-class AboutCog:
+class AboutCog(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
