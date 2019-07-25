@@ -1,4 +1,4 @@
-git+https://github.com/Rapptz/discord.py
+discord.py
 aiohttp
 asyncio
 beautifulsoup4==4.5.1
