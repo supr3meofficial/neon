@@ -143,7 +143,7 @@ def display_help(help_to_display = None):
 
 		show_help = ':warning: **Command not found.**'
 
-class HelpCog:
+class HelpCog(commands.Cog):
 
 	def __init__(self, bot):
 		self.bot = bot

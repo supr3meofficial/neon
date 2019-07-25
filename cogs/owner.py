@@ -17,7 +17,7 @@ def get_human_readable_uptime_diff(start_time):
 
 	return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
-class OwnerCog:
+class OwnerCog(commands.Cog):
 
 	def __init__(self, bot):
 		self.bot = bot
