@@ -15,7 +15,6 @@ def display_help(help_to_display = None):
 					`+ race`
 					`+ opencase`
 					`+ onedeag`
-					`+ oof`
 					`+ dab`
 					`+ literallyme`
 					`+ mitochondria`
@@ -38,7 +37,6 @@ def display_help(help_to_display = None):
 					`+ invite`
 					`+ discord`
 					`+ donate`
-					`+ patreon`
 
 					"""
 
@@ -93,7 +91,6 @@ def display_help(help_to_display = None):
 	elif help_to_display == 'invite':
 
 		show_help = ':question:│ `Usage: +invite `\n:grey_exclamation:│ `Result: Posts the bot invitation link`'
-	
 	
 	elif help_to_display == 'ban':
 
