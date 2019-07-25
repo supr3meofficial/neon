@@ -72,7 +72,7 @@ async def track_animation(trackracer, ctx):
 	await trackmsg.edit(embed=embed)
 
 
-class GamesCog:
+class GamesCog(commands.Cog):
 
 	def __init__(self, bot):
 		self.bot = bot
