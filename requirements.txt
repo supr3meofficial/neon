@@ -1,4 +1,4 @@
-discord.py=1.0.0
+discord.py==1.0.0
 aiohttp
 asyncio
 beautifulsoup4==4.5.1
