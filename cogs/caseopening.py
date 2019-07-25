@@ -3,7 +3,7 @@ from discord.ext import commands
 import random
 import asyncio
 
-class CaseOpeningCog:
+class CaseOpeningCog(commands.Cog):
 
 	def __init__(self, bot):
 		self.bot = bot
