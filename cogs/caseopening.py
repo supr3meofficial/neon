@@ -194,7 +194,29 @@ class CaseOpeningCog(commands.Cog):
 			"Classic Knife ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/weapons/base_weapons/weapon_knife_css.0b33071c28c02e6f19e363dc9a838566c6557389.png", #173
 			"Classic Knife | Slaughter ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_css_am_zebra_light_large.ae26f920f022f2dc8d700bba2dee4e7003552a4b.png", #174
 			"Classic Knife | Fade ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_css_aa_fade_light_large.f39aed45b6599c0e5850cb948b81f45268febc83.png", #175
-			"Classic Knife | Crimson Web ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_css_hy_webs_light_large.9f0ea28d7a29034eaade735f0bfd5d8bc5600e99.png" #176
+			"Classic Knife | Crimson Web ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_css_hy_webs_light_large.9f0ea28d7a29034eaade735f0bfd5d8bc5600e99.png", #176
+			"AWP | Containment Breach ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_awp_cu_awp_virus_light_large.00307f818d425d94cb8e4eeda1e27699f713fb45.png", #177
+			"MAC-10 | Stalker ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mac10_gs_mac10_stalker_light_large.cb4d7a60a69978f1575526f979be8e1e1538a673.png", #178
+			"SG 553 | Colony IV ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_sg556_cu_sg553_reactor_light_large.af5c07d2528198641adf32cf3498aa7d2823b048.png", #179
+			"SSG 08 | Bloodshot ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ssg08_cu_ssg08_tickler_light_large.b6a73afa62f8983211740a1570410df4864f45f6.png", #180
+			"Tec-9 | Decimator ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_tec9_gs_tec9_decimator_light_large.f4390b25719d23ca40161e399c3a4b9aae702638.png", #181
+			"AK-47 | Rat Rod ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_ak47_gs_ak47_nibbler_light_large.1c402d395b628aa5667239eec44640d7f603d754.png", #182
+			"AUG | Arctic Wolf ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_aug_cu_aug_whitefang_light_large.051b21da4e56c64ad78ee8a67a0e9e237a4e01b1.png", #183
+			"P2000 | Obsidian ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_hkp2000_cu_p2000_obsidian_light_large.0a6ad31fe8f70401ffdd377c289309d0256282c6.png", #184
+			"MP7 | Neon Ply ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mp7_cu_mp7_replica_light_large.f56c050cb5147918efb6872ce61fda358a684cf5.png", #185
+			"PP-Bizon | Embargo ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_bizon_cu_bizon_road_warrior_light_large.92dd3aa0346010a6e3a625d01ae4f965195a05d2.png", #186
+			"R8 Revolver | Memento ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_revolver_gs_r8_memento_light_large.8ca600a94c72b5a3b33bb826a1a588f7e48d5e78.png", #187
+			"Dual Berettas | Balance ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_elite_gs_dual_elites_rose_light_large.8df8980203b198879875be44656361ccbb41791e.png", #188
+			"MP5-SD | Acid Wash ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_mp5sd_gs_mp5_etch_light_large.a86867a43e3607c1826b6d106870bf69642687b0.png", #189
+			"SCAR-20 | Torn ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_scar20_sp_scar20_striker_dust_light_large.0842dbdf0fe714c92f634b376e15c2f8c21b6d56.png", #190
+			"Nova | Plume ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_nova_cu_nova_featherswing_light_large.49e81792746dc7844ff18c45fb23030cd8b66d59.png", #191
+			"M249 | Warbird ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_m249_gs_m249_warbird_veteran_light_large.29a2ee22222b037e6825fb0c230aa799718e4115.png", #192
+			"G3SG1 | Black Sand ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_g3sg1_cu_g3sg1_blacksand_light_large.8a9b364779493ae19a87eb4e73aa47f4432d3f41.png", #193
+			"Nomad Knife | Stained ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_outdoor_aq_forced_light_large.14a5428217d497aaaeecc8c126390b3d5ead5348.png", #194
+			"Skeleton Knife ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/weapons/base_weapons/weapon_knife_skeleton.1fc401a844008bcaa89f8381cbe7b550a051609d.png", #195
+			"Survival Knife | Case Hardened ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_canis_aq_oiled_light_large.2fa47bb5d071d4c97891a46c1d8a809d5ed1df1a.png", #196
+			"Paracord Knife | Blue Steel ;https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_knife_cord_aq_blued_light_large.fb64668e22b20cea7114e71d24dae38059cda8cf.png" #197
+
 			]
 
 			major_medals = [
@@ -334,7 +356,11 @@ class CaseOpeningCog(commands.Cog):
 			case_items[173],
 			case_items[174],
 			case_items[175],
-			case_items[176]
+			case_items[176],
+			case_items[194],
+			case_items[195],
+			case_items[196],
+			case_items[197]
 			]
 
 			case_items_covert = [
@@ -350,7 +376,9 @@ class CaseOpeningCog(commands.Cog):
 			case_items[150],
 			case_items[151],
 			case_items[156],
-			case_items[157]
+			case_items[157],
+			case_items[177],
+			case_items[178]
 			]
 
 			case_items_classified = [
@@ -374,7 +402,10 @@ class CaseOpeningCog(commands.Cog):
 			case_items[149],
 			case_items[158],
 			case_items[159],
-			case_items[160]
+			case_items[160],
+			case_items[179],
+			case_items[180],
+			case_items[181]
 			]
 
 			case_items_restricted = [
@@ -410,7 +441,12 @@ class CaseOpeningCog(commands.Cog):
 			case_items[162],
 			case_items[163],
 			case_items[164],
-			case_items[165]
+			case_items[165].
+			case_items[182],
+			case_items[183],
+			case_items[184],
+			case_items[185],
+			case_items[186]
 			]
 
 			case_items_milspec = [
@@ -483,7 +519,14 @@ class CaseOpeningCog(commands.Cog):
 			case_items[169],
 			case_items[170],
 			case_items[171],
-			case_items[172]
+			case_items[172],
+			case_items[187],
+			case_items[188],
+			case_items[189],
+			case_items[190],
+			case_items[191],
+			case_items[192],
+			case_items[193]
 			]
 
 			case_items_condition = [
