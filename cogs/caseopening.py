@@ -441,7 +441,7 @@ class CaseOpeningCog(commands.Cog):
 			case_items[162],
 			case_items[163],
 			case_items[164],
-			case_items[165].
+			case_items[165],
 			case_items[182],
 			case_items[183],
 			case_items[184],
