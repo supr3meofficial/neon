@@ -141,7 +141,8 @@ class GamesCog(commands.Cog):
 		await asyncio.sleep(2)
 		await m.delete()
 		messages = await channel.history(limit=30).flatten()
-		message = random.choice(messages)
+		message_set = random.choice(messages)
+		message = message_set
 		await message.add_reaction("<:Neon:665702985799565317>")
 		m2 = await channel.send("<:Neon:665702985799565317> You have 15 seconds to find me!")
 
