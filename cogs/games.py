@@ -145,13 +145,14 @@ class GamesCog(commands.Cog):
 		m2 = await channel.send("<:NeonDev:665703004120285210> You have 15 seconds to find me!")
 
 		try:
-			reaction, user = await self.bot.wait_for('reaction_add', timeout=15.0, check=lambda reaction,user: user.id = author.id and str(reaction.emoji) == '<:NeonDev:665703004120285210>' and reaction.message.id == message.id)
+			reaction, user = await self.bot.wait_for('reaction_add', timeout=15.0, check=lambda reaction,user: user == author and str(reaction.emoji) == '<:NeonDev:665703004120285210>' and reaction.message.id == message.id)
 		except asyncio.TimeoutError:
 			await m2.delete()
 			await channel.send('<:NeonDev:665703004120285210> Game over! Better luck next time')
 		else:
 			await m2.delete()
 			await channel.send('<:NeonDev:665703004120285210> You found me!')
+
 
 
 def setup(bot):
