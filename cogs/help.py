@@ -19,6 +19,7 @@ def display_help(help_to_display = None):
 					`+ literallyme`
 					`+ mitochondria`
 					`+ nani`
+					`+ hide`
 
 					**Utilities:**
 
@@ -91,35 +92,35 @@ def display_help(help_to_display = None):
 	elif help_to_display == 'invite':
 
 		show_help = ':question:│ `Usage: +invite `\n:grey_exclamation:│ `Result: Posts the bot invitation link`'
-	
+
 	elif help_to_display == 'ban':
 
 		show_help = ':question:│ `Usage: +ban <member> <reason> <delete_message_days> `\n:grey_exclamation:│ `Result: Bans a member`'
-	
+
 	elif help_to_display == 'unban':
 
 		show_help = ':question:│ `Usage: +unban <id> <reason> `\n:grey_exclamation:│ `Result: Unbans a member`'
-	
+
 	elif help_to_display == 'kick':
 
 		show_help = ':question:│ `Usage: +kick <member> <reason> `\n:grey_exclamation:│ `Result: Kicks a member`'
-	
+
 	elif help_to_display == 'dab':
-		
+
 		show_help = ':question:│ `Usage: +dab <anything> `\n:grey_exclamation:│ `Result: Dabs on the haters`'
-		
+
 	elif help_to_display == 'mitochondria':
-		
+
 		show_help = ':question:│ `Usage: +mitochondria `\n:grey_exclamation:│ `Result: Posts a secret message to ISIS`'
-	
+
 	elif help_to_display == 'literallyme':
-		
+
 		show_help = ':question:│ `Usage: +literallyme `\n:grey_exclamation:│ `Result: Posts a relatable picture`'
 
 	elif help_to_display == 'github':
 
 		show_help = ':question:│ `Usage: +github `\n:grey_exclamation:│ `Result: Posts the bot github link`'
-	
+
 	elif help_to_display == 'onedeag':
 
 		show_help = ':question:| `Usage: +onedeag`\n:grey_exclamation:| `Result: One deags a random guild member`'
@@ -127,7 +128,7 @@ def display_help(help_to_display = None):
 	elif help_to_display == 'spotify':
 
 		show_help = ':question:| `Usage: +spotify <member>`\n:grey_exclamation:| `Result: Displays the current song the user is listening to`'
-	
+
 	elif help_to_display == 'createinvite':
 
 		show_help = ':question:| `Usage: +createinvite`\n:grey_exclamation:| `Result: Creates an invite for the channel the command is ran`'
@@ -135,6 +136,10 @@ def display_help(help_to_display = None):
 	elif help_to_display == 'nani':
 
 		show_help = ':question:| `Usage: +nani <member>`\n:grey_exclamation:| `Result: Nani!?`'
+
+	elif help_to_display == 'hide':
+
+		show_help = ':question:| `Usage: +hide`\n:grey_exclamation:| `Result: Hides the bot as a reaction to a random old message (last 30). Click the reaction to win!`'
 
 	else:
 
@@ -147,7 +152,7 @@ class HelpCog(commands.Cog):
 
 	@commands.command(name='help')
 	async def help(self, ctx, h_command = None):
-		
+
 		display_help(h_command)
 		await ctx.message.add_reaction("❔")
 		embed=discord.Embed(title="Commands List", description=show_help, color=0x0080c0)
@@ -155,5 +160,5 @@ class HelpCog(commands.Cog):
 		await ctx.author.send(embed=embed)
 
 def setup(bot):
-	bot.remove_command('help')	
+	bot.remove_command('help')
 	bot.add_cog(HelpCog(bot))
