@@ -131,6 +131,7 @@ class GamesCog(commands.Cog):
 
 	@commands.command(name='hide')
 	@commands.guild_only()
+	@commands.cooldown(1, 15, commands.BucketType.user)
 	async def hide(self, ctx):
 
 		channel = ctx.channel
@@ -141,17 +142,17 @@ class GamesCog(commands.Cog):
 		await m.delete()
 		messages = await channel.history(limit=30).flatten()
 		message = random.choice(messages)
-		await message.add_reaction("<:NeonDev:665703004120285210>")
-		m2 = await channel.send("<:NeonDev:665703004120285210> You have 15 seconds to find me!")
+		await message.add_reaction("<:Neon:665702985799565317>")
+		m2 = await channel.send("<:Neon:665702985799565317> You have 15 seconds to find me!")
 
 		try:
-			reaction, user = await self.bot.wait_for('reaction_add', timeout=15.0, check=lambda reaction,user: user == author and str(reaction.emoji) == '<:NeonDev:665703004120285210>' and reaction.message.id == message.id)
+			reaction, user = await self.bot.wait_for('reaction_add', timeout=15.0, check=lambda reaction,user: user == author and str(reaction.emoji) == '<:Neon:665702985799565317>' and reaction.message.id == message.id)
 		except asyncio.TimeoutError:
 			await m2.delete()
-			await channel.send('<:NeonDev:665703004120285210> Game over! Better luck next time')
+			await channel.send('<:Neon:665702985799565317> Game over! Better luck next time')
 		else:
 			await m2.delete()
-			await channel.send('<:NeonDev:665703004120285210> You found me!')
+			await channel.send('<:Neon:665702985799565317> You found me!')
 
 
 
