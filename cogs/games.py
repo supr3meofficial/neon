@@ -120,7 +120,7 @@ class GamesCog(commands.Cog):
 				"https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_hy_ddpat_urb_light_large.06af0cb0e08490f1fba17acd1b9c98978745c213.png",
 				"https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_hy_mottled_sand_light_large.615be084d4bc9db8c98451f13351cae1fa0ec69c.png",
 				"https://csgostash.com/img/weapons/Desert_Eagle.png"]
-				
+
 		deag = random.choice(deags)
 
 		embed = discord.Embed(title="", description="", colour=member.colour)
@@ -128,6 +128,30 @@ class GamesCog(commands.Cog):
 		embed.set_thumbnail(url=deag)
 		embed.add_field(name="You have popped a one deag on:", value=shot, inline=True)
 		await ctx.send(embed=embed)
+
+	@commands.command(name='hide')
+	@commands.guild_only()
+	async def hide(self, ctx):
+
+		channel = ctx.channel
+		author = ctx.author
+
+		m = await channel.send("Hiding!")
+		await asyncio.sleep(2)
+		await m.delete()
+		messages = await channel.history(limit=30).flatten()
+		message = random.choice(messages)
+		await message.add_reaction("<:NeonDev:665703004120285210>")
+		m2 = await channel.send("<:NeonDev:665703004120285210> You have 15 seconds to find me!")
+
+		try:
+			reaction, user = await self.bot.wait_for('reaction_add', timeout=15.0, check=lambda reaction,user: user.id = author.id and str(reaction.emoji) == '<:NeonDev:665703004120285210>' and reaction.message.id == message.id)
+		except asyncio.TimeoutError:
+			await m2.delete()
+			await channel.send('<:NeonDev:665703004120285210> Game over! Better luck next time')
+		else:
+			await m2.delete()
+			await channel.send('<:NeonDev:665703004120285210> You found me!')
 
 
 def setup(bot):
