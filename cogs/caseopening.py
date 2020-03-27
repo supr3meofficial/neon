@@ -89,7 +89,7 @@ class CaseOpeningCog(commands.Cog):
 			"★ Hydra Gloves | Emerald",       	#65
 			"★ Hydra Gloves | Rattle",       	#66
 			"★ Hydra Gloves | Mangrovef",      	#67
-			"★ Specialist Gloves | Fade",     	#68
+			"★ Specialist Gloves | Foundation", #68
 			"★ Specialist Gloves | Crimson Web",#69
 			"★ Specialist Gloves | Mogul",    	#70
 			"★ Specialist Gloves | Buckshot", 	#71
@@ -278,7 +278,6 @@ class CaseOpeningCog(commands.Cog):
 			case_items[31],
 			case_items[32],
 			case_items[33],
-			case_items[34],
 			case_items[35],
 			case_items[64],
 			case_items[65],
