@@ -21,8 +21,8 @@ class CaseOpeningCog(commands.Cog):
 			#Case Opening Items
 
 			case_items = [
-			"★ ★ M9 Bayonet | Doppler",        #0
-			"★ ★ Karambit | Doppler",          #1
+			"★ M9 Bayonet | Doppler",			#0
+			"★ Karambit | Doppler",				#1
 			"AK-47 | Bloodsport",           	#2
 			"M4A1-S | Decimator",           	#3
 			"AWP | Oni Taji",               	#4
