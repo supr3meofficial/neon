@@ -29,7 +29,7 @@ class CaseOpeningCog(commands.Cog):
 			"AWP | Hyper Beast",            	#5
 			"USP-S | Torque",               	#6
 			"AUG | Ricochet",               	#7
-			"Galil-AR | Rocket Pop",        	#8
+			"Galil AR | Rocket Pop",        	#8
 			"MAG-7 | Sonar",               		#9
 			"UMP-45 | Riot",                	#10
 			"M4A1-S | Flashback",           	#11
@@ -41,7 +41,7 @@ class CaseOpeningCog(commands.Cog):
 			"★ Bloodhound Gloves | Snakebite", 	#17
 			"PP-Bizon | Osiris",            	#18
 			"M4A4 | Evil Daimyo",           	#19
-			"Galil-AR | Crimson Tsunami",   	#20
+			"Galil AR | Crimson Tsunami",   	#20
 			"P250 | Wingshot",              	#21
 			"Glock-18 | Bunsen Burner",			#22
 			"P2000 | Pulse",                	#23
