@@ -70,7 +70,7 @@ class CaseOpeningCog(commands.Cog):
 			"Tec-9 | Cut Out",              	#46
 			"M4A4 | Neo-Noir",              	#47
 			"MP7 | Bloodsport",             	#48
-			"AWP | Mortisa",                	#49
+			"AWP | Mortis",                		#49
 			"USP-S | Cortex",               	#50
 			"AUG | Stymphalian",            	#51
 			"Glock-18 | Moonrise",          	#52
@@ -125,7 +125,7 @@ class CaseOpeningCog(commands.Cog):
 			"R8 Revolver | Survivalist",		#101
 			"Dual Berettas | Shred",			#102
 			"AUG | Amber Slipstream",			#103
-			"MP9 | Capillar",					#104
+			"MP9 | Capillary",					#104
 			"Tec-9 | Snek-9",					#105
 			"P90 | Traction",					#106
 			"Glock-18 | Warhawk",				#107
@@ -218,7 +218,24 @@ class CaseOpeningCog(commands.Cog):
 			"★ Nomad Knife | Stained", 			#194
 			"★ Skeleton Knife ", 				#195
 			"★ Survival Knife | Case Hardened", #196
-			"★ Paracord Knife | Blue Steel"		#197
+			"★ Paracord Knife | Blue Steel",	#197
+			"Glock-18 | Bullet Queen",			#198
+			"M4A1-S | Player Two",				#199
+			"AK-47 | Phantom Disruptor",		#200
+			"MAC-10 | Disco Tech",				#201
+			"MAG-7 | Justice",					#202
+			"SG 553 | Darkwing",				#203
+			"Sawed-Off | Apocalypto",			#204
+			"SCAR-20 | Enforcer",				#205
+			"SSG 08 | Fever Dream",				#206
+			"P2000 | Acid Etched",				#207
+			"Desert Eagle | Blue Ply",			#208
+			"AWP | Capillary",					#209
+			"R8 Revolver | Bone Forged",		#210
+			"AUG | Tom Cat",					#211
+			"MP5-SD | Desert Strike",			#212
+			"Negev | Prototype",				#213
+			"CZ75-Auto | Distressed"			#214
 			]
 
 			csgo_pins = [
@@ -333,7 +350,9 @@ class CaseOpeningCog(commands.Cog):
 			case_items[156],
 			case_items[157],
 			case_items[177],
-			case_items[178]
+			case_items[178],
+			case_items[198],
+			case_items[199]
 			]
 
 			case_items_classified = [
@@ -360,7 +379,10 @@ class CaseOpeningCog(commands.Cog):
 			case_items[160],
 			case_items[179],
 			case_items[180],
-			case_items[181]
+			case_items[181],
+			case_items[200],
+			case_items[201],
+			case_items[202]
 			]
 
 			case_items_restricted = [
@@ -401,7 +423,12 @@ class CaseOpeningCog(commands.Cog):
 			case_items[183],
 			case_items[184],
 			case_items[185],
-			case_items[186]
+			case_items[186],
+			case_items[203],
+			case_items[204],
+			case_items[205],
+			case_items[206],
+			case_items[207]
 			]
 
 			case_items_milspec = [
@@ -481,7 +508,14 @@ class CaseOpeningCog(commands.Cog):
 			case_items[190],
 			case_items[191],
 			case_items[192],
-			case_items[193]
+			case_items[193],
+			case_items[208],
+			case_items[209],
+			case_items[210],
+			case_items[211],
+			case_items[212],
+			case_items[213],
+			case_items[214]
 			]
 
 			case_items_condition = [
