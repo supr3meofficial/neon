@@ -11,3 +11,5 @@ config.py
 neon_snapshot.py
 # venv
 venv/*
+# Logs
+*.log
