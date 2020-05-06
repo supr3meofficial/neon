@@ -20,16 +20,16 @@
 |mitochondria|mitochondria|"Tell ISIS the mitochondria is the powerhouse of the cell"| 
 |ping|ping|Returns current bot latency in ms|
 |roll|roll [max]|Rolls a dice up to maximum specified|
-|choose|choose <"choice1" "choice2" ...>|Selects one of the choices given|
-|joined |joined <mention>|Returns the mentioned user's guild join date|
-|ban|ban <mention> [reason] [del msg history]|Bans the mentioned user with the given reason|
-|unban|unban <id> [reason]|Unbans the user id with the given reason|
-|kick|kick <mention> [reason]|Kicks the mentioned user with the given reason|
+|choose|choose ["choice1" "choice2" ...]|Selects one of the choices given|
+|joined |joined [mention]|Returns the mentioned user's guild join date|
+|ban|ban [mention] [reason] [del msg history]|Bans the mentioned user with the given reason|
+|unban|unban [id] [reason]|Unbans the user id with the given reason|
+|kick|kick [mention] [reason]|Kicks the mentioned user with the given reason|
 |invite|invite|Returns the bot invite link|
 |donate|donate|Returns my donation links|
-|spotify|spotify <mention>|Displays the current song the user is listening to|
+|spotify|spotify [mention]|Displays the current song the user is listening to|
 |createinvite |createinvite|Creates a channel invite|
-|nani|nani <mention>|Nani!?|
+|nani|nani [mention]|Nani!?|
 |hide|hide|Minigame: Reacts to a random old message (last 30). Click the reaction to win!|
 
 ### Bot Invite Link
