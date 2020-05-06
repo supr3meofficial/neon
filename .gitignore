@@ -1,0 +1,11 @@
+# Cached
+__pycache__/
+cogs/__pycache__/
+_cache
+*.py[cod]
+*$py.class
+*.pyc
+# Local configs
+config.py
+# Snapshots
+neon_snapshot.py
