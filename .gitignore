@@ -9,3 +9,5 @@ _cache
 config.py
 # Snapshots
 neon_snapshot.py
+# venv
+venv/*
