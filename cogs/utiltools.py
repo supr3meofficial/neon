@@ -135,34 +135,5 @@ class UtilTools(commands.Cog):
 		embed.add_field(name="Chose:", value=choice, inline=True)
 		await ctx.send(embed=embed)
 
-	@commands.command()
-	@commands.guild_only()
-	async def cat(self, ctx):
-		"""Posts a random cat picture"""
-		async with aiohttp.ClientSession() as session:
-			async with session.get('http://aws.random.cat/meow') as r:
-				if r.status == 200:
-
-					js = await r.json()
-					embed = discord.Embed(title=":cat: Random Cat", description="", colour=ctx.author.colour)
-					embed.set_image(url=js['file'])
-					requested_by = "Requested by {}".format(ctx.author.name)
-					embed.set_footer(text=requested_by)
-					await ctx.send(embed=embed)
-
-	@commands.command()
-	@commands.guild_only()
-	async def dog(self, ctx):
-		"""Posts a random dog picture"""
-		async with aiohttp.ClientSession() as session:
-			async with session.get('http://random.dog/woof.json') as r:
-				if r.status == 200:
-					js = await r.json()
-					embed = discord.Embed(title=":dog: Random Dog", description="", colour=ctx.author.colour)
-					embed.set_image(url=js['url'])
-					requested_by = "Requested by {}".format(ctx.author.name)
-					embed.set_footer(text=requested_by)
-					await ctx.send(embed=embed)
-
 def setup(bot):
 	bot.add_cog(UtilTools(bot))
