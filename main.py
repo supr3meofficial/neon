@@ -56,19 +56,92 @@ class Neon(commands.Bot):
 				print(f'Failed to load extension {extension}.', file=sys.stderr)
 				traceback.print_exc()
 
-	async def on_command_error(self, ctx, error):
-		if isinstance(error, commands.NoPrivateMessage):
-			await ctx.author.send('This command cannot be used in private messages.')
-		elif isinstance(error, commands.DisabledCommand):
-			await ctx.author.send('Sorry. This command is disabled and cannot be used.')
-		elif isinstance(error, commands.CommandInvokeError):
-			original = error.original
-			if not isinstance(original, discord.HTTPException):
-				print(f'In {ctx.command.qualified_name}:', file=sys.stderr)
-				traceback.print_tb(original.__traceback__)
-				print(f'{original.__class__.__name__}: {original}', file=sys.stderr)
-		elif isinstance(error, commands.ArgumentParsingError):
-			await ctx.send(error)
+	async def on_command_error(ctx, error):
+	    # Return in local command handler
+	    if hasattr(ctx.command, 'on_error'):
+	        return
+
+	    # Get the original exception
+	    error = getattr(error, 'original', error)
+
+	    if isinstance(error, commands.CommandNotFound):
+	        return
+
+	    if isinstance(error, commands.BotMissingPermissions):
+	        missing = [perm.replace('_', ' ').replace('guild', 'server').title() for perm in error.missing_perms]
+	        if len(missing) > 2:
+	            fmt = '{}, and {}'.format("**, **".join(missing[:-1]), missing[-1])
+	        else:
+	            fmt = ' and '.join(missing)
+	        _message = 'I need the **{}** permission(s) to run this command.'.format(fmt)
+	        embed = discord.Embed(title="No permissions",
+			description=_message,
+			colour=0xbf0000)
+	        embed.set_author(icon_url=bot.user.avatar_url, name=bot.user.name)
+	        await ctx.send(embed=embed)
+	        return
+
+	    if isinstance(error, commands.DisabledCommand):
+	        await ctx.send('This command has been disabled.')
+	        return
+
+	    if isinstance(error, commands.CommandOnCooldown):
+	        msg="This command is on cooldown, please retry in {}s.".format(math.ceil(error.retry_after))
+	        embed = discord.Embed(title="Cooling Down",
+	        description=msg,
+	        colour=0xbf0000)
+	        embed.set_author(icon_url=ctx.author.avatar_url, name=ctx.author)
+	        await ctx.send(embed=embed)
+	        return
+
+	    if isinstance(error, commands.MissingPermissions):
+	        missing = [perm.replace('_', ' ').replace('guild', 'server').title() for perm in error.missing_perms]
+	        if len(missing) > 2:
+	            fmt = '{}, and {}'.format("**, **".join(missing[:-1]), missing[-1])
+	        else:
+	            fmt = ' and '.join(missing)
+	        _message = 'You need the **{}** permission(s) to use this command.'.format(fmt)
+	        embed = discord.Embed(title="No permissions",
+			description=_message,
+			colour=0xbf0000)
+	        embed.set_author(icon_url=ctx.author.avatar_url, name=ctx.author)
+	        await ctx.send(embed=embed)
+	        return
+
+	    if isinstance(error, discord.Forbidden):
+	        embed = discord.Embed(title="No permissions",
+	        description="You do not have permission to perform this command",
+	        colour=0xbf0000)
+	        embed.set_author(icon_url=ctx.author.avatar_url, name=ctx.author)
+	        await ctx.send(embed=embed)
+
+	    if isinstance(error, commands.UserInputError):
+	        embed = discord.Embed(title="Invalid input",
+					description="Please re-check your command and try again",
+					colour=0xbf0000)
+	        embed.set_author(icon_url=ctx.author.avatar_url, name=ctx.author.name)
+	        await ctx.send(embed=embed)
+	        return
+
+	    if isinstance(error, commands.NoPrivateMessage):
+	        try:
+	            await ctx.author.send('This command cannot be used in direct messages.')
+	        except discord.Forbidden:
+	            pass
+	        return
+
+	    if isinstance(error, commands.CheckFailure):
+	        embed = discord.Embed(title="Invalid input",
+					description="You do not have permission to use this command.",
+					colour=0xbf0000)
+	        embed.set_author(icon_url=ctx.author.avatar_url, name=ctx.author.name)
+	        await ctx.send(embed=embed)
+	        return
+
+	    # Ignore all other exception types, but print them to stderr
+	    print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
+
+	    traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 	async def on_ready(self):
 		if not hasattr(self, 'uptime'):
