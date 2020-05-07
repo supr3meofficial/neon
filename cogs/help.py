@@ -1,164 +1,193 @@
-import discord
 from discord.ext import commands
+from .utils import checks, formats, time
+from .utils.paginator import Pages
+import discord
+from collections import OrderedDict, deque, Counter
+import os, datetime
+import asyncio
+import copy
+import unicodedata
+import inspect
+import itertools
+from typing import Union
 
-def display_help(help_to_display = None):
+class HelpPaginator(Pages):
+	def __init__(self, help_command, ctx, entries, *, per_page=4):
+		super().__init__(ctx, entries=entries, per_page=per_page)
+		self.reaction_emojis.append(('\N{WHITE QUESTION MARK ORNAMENT}', self.show_bot_help))
+		self.total = len(entries)
+		self.help_command = help_command
+		self.prefix = help_command.clean_prefix
+		self.is_bot = False
 
-	global show_help
+	def get_bot_page(self, page):
+		cog, description, commands = self.entries[page - 1]
+		self.title = f'{cog} Commands'
+		self.description = description
+		return commands
 
-	if help_to_display == None:
+	def prepare_embed(self, entries, page, *, first=False):
+		self.embed.clear_fields()
+		self.embed.description = self.description
+		self.embed.title = self.title
 
-		show_help = """
-					**Fun Stuff:**
+		if self.is_bot:
+			value ='For more help, please contact supr3me#0062'
+			self.embed.add_field(name='Support', value=value, inline=False)
 
-					`+ cat`
-					`+ dog`
-					`+ race`
-					`+ opencase`
-					`+ onedeag`
-					`+ dab`
-					`+ literallyme`
-					`+ mitochondria`
-					`+ nani`
-					`+ hide`
+		self.embed.set_footer(text=f'Use "{self.prefix}help command" for more info on a command.')
 
-					**Utilities:**
+		for entry in entries:
+			signature = f'{entry.qualified_name} {entry.signature}'
+			self.embed.add_field(name=signature, value=entry.short_doc or "No help given", inline=False)
 
-					`+ ping`
-					`+ roll`
-					`+ choose`
-					`+ joined`
-					`+ ban`
-					`+ unban`
-					`+ kick`
-					`+ clock`
-					`+ createinvite`
+		if self.maximum_pages:
+			self.embed.set_author(name=f'Page {page}/{self.maximum_pages} ({self.total} commands)')
 
-					**About:**
+	async def show_help(self):
+		"""shows this message"""
 
-					`+ invite`
-					`+ discord`
-					`+ donate`
+		self.embed.title = 'Paginator help'
+		self.embed.description = 'Hello! Welcome to the help page.'
 
-					"""
+		messages = [f'{emoji} {func.__doc__}' for emoji, func in self.reaction_emojis]
+		self.embed.clear_fields()
+		self.embed.add_field(name='What are these reactions for?', value='\n'.join(messages), inline=False)
 
-	elif help_to_display == 'help':
+		self.embed.set_footer(text=f'We were on page {self.current_page} before this message.')
+		await self.message.edit(embed=self.embed)
 
-		show_help = ':question:│ `Usage: +help`\n:grey_exclamation:│ `Result: Shows you the help page`'
+		async def go_back_to_current_page():
+			await asyncio.sleep(30.0)
+			await self.show_current_page()
 
-	elif help_to_display == 'roll':
+		self.bot.loop.create_task(go_back_to_current_page())
 
-		show_help = ':question:│ `Usage: +roll <max roll>`\n:grey_exclamation:│ `Result: Rolls a dice with the max value set`'
+	async def show_bot_help(self):
+		"""shows how to use the bot"""
 
-	elif help_to_display == 'choose':
+		self.embed.title = 'Using the bot'
+		self.embed.description = 'Hello! Welcome to the help page.'
+		self.embed.clear_fields()
 
-		show_help = ':question:│ `Usage: +choose <choices>`\n:grey_exclamation:│ `Result: Chooses between a selection of anything set`'
+		entries = (
+			('<argument>', 'This means the argument is __**required**__.'),
+			('[argument]', 'This means the argument is __**optional**__.'),
+			('[A|B]', 'This means the it can be __**either A or B**__.'),
+			('[argument...]', 'This means you can have multiple arguments.\n' \
+							  'Now that you know the basics, it should be noted that...\n' \
+							  '__**You do not type in the brackets!**__')
+		)
 
-	elif help_to_display == 'joined':
+		self.embed.add_field(name='How do I use this bot?', value='Reading the bot signature is pretty simple.')
 
-		show_help = ':question:│ `Usage: +joined <user>`\n:grey_exclamation:│ `Result: Tells you when a user joined the discord`'
+		for name, value in entries:
+			self.embed.add_field(name=name, value=value, inline=False)
 
-	elif help_to_display == 'cat':
+		self.embed.set_footer(text=f'We were on page {self.current_page} before this message.')
+		await self.message.edit(embed=self.embed)
 
-		show_help = ':question:│ `Usage: +cat`\n:grey_exclamation:│ `Result: Posts a random cat picture`'
+		async def go_back_to_current_page():
+			await asyncio.sleep(30.0)
+			await self.show_current_page()
 
-	elif help_to_display == 'dog':
+		self.bot.loop.create_task(go_back_to_current_page())
 
-		show_help = ':question:│ `Usage: +dog`\n:grey_exclamation:│ `Result: Posts a random dog picture.`'
+class PaginatedHelpCommand(commands.HelpCommand):
+	def __init__(self):
+		super().__init__(command_attrs={
+			'cooldown': commands.Cooldown(1, 3.0, commands.BucketType.member),
+			'help': 'Shows help about the bot, a command, or a category'
+		})
 
-	elif help_to_display == 'ping':
+	async def on_help_command_error(self, ctx, error):
+		if isinstance(error, commands.CommandInvokeError):
+			await ctx.send(str(error.original))
 
-		show_help = ':question:│ `Usage: +ping`\n:grey_exclamation:│ `Result: Pings the bot`'
+	def get_command_signature(self, command):
+		parent = command.full_parent_name
+		if len(command.aliases) > 0:
+			aliases = '|'.join(command.aliases)
+			fmt = f'[{command.name}|{aliases}]'
+			if parent:
+				fmt = f'{parent} {fmt}'
+			alias = fmt
+		else:
+			alias = command.name if not parent else f'{parent} {command.name}'
+		return f'{alias} {command.signature}'
 
-	elif help_to_display == 'opencase':
+	async def send_bot_help(self, mapping):
+		def key(c):
+			return c.cog_name or '\u200bNo Category'
 
-		show_help = ':question:│ `Usage: +opencase`\n:grey_exclamation:│ `Result: Opens a CS:GO case`'
+		bot = self.context.bot
+		entries = await self.filter_commands(bot.commands, sort=True, key=key)
+		nested_pages = []
+		per_page = 9
+		total = 0
 
-	elif help_to_display == 'discord':
+		for cog, commands in itertools.groupby(entries, key=key):
+			commands = sorted(commands, key=lambda c: c.name)
+			if len(commands) == 0:
+				continue
 
-		show_help = ':question:│ `Usage: +discord`\n:grey_exclamation:│ `Result: Posts the official discord link`'
+			total += len(commands)
+			actual_cog = bot.get_cog(cog)
+			# get the description if it exists (and the cog is valid) or return Empty embed.
+			description = (actual_cog and actual_cog.description) or discord.Embed.Empty
+			nested_pages.extend((cog, description, commands[i:i + per_page]) for i in range(0, len(commands), per_page))
 
-	elif help_to_display == 'donate':
+		# a value of 1 forces the pagination session
+		pages = HelpPaginator(self, self.context, nested_pages, per_page=1)
 
-		show_help = ':question:│ `Usage: +donate`\n:grey_exclamation:│ `Result: Posts the donation links to supr3me`'
+		# swap the get_page implementation to work with our nested pages.
+		pages.get_page = pages.get_bot_page
+		pages.is_bot = True
+		pages.total = total
+		await pages.paginate()
 
-	elif help_to_display == 'clock':
+	async def send_cog_help(self, cog):
+		entries = await self.filter_commands(cog.get_commands(), sort=True)
+		pages = HelpPaginator(self, self.context, entries)
+		pages.title = f'{cog.qualified_name} Commands'
+		pages.description = cog.description
 
-		show_help = ':question:│ `Usage: +clock`\n:grey_exclamation:│ `Result: Sets up an animated clock`'
+		await pages.paginate()
 
-	elif help_to_display == 'race':
+	def common_command_formatting(self, page_or_embed, command):
+		page_or_embed.title = self.get_command_signature(command)
+		if command.description:
+			page_or_embed.description = f'{command.description}\n\n{command.help}'
+		else:
+			page_or_embed.description = command.help or 'No help found...'
 
-		show_help = ':question:│ `Usage: +race`\n:grey_exclamation:│ `Result: Minigame that races an Audi for a random time`'
+	async def send_command_help(self, command):
+		# No pagination necessary for a single command.
+		embed = discord.Embed(colour=discord.Colour.blurple())
+		self.common_command_formatting(embed, command)
+		await self.context.send(embed=embed)
 
-	elif help_to_display == 'invite':
+	async def send_group_help(self, group):
+		subcommands = group.commands
+		if len(subcommands) == 0:
+			return await self.send_command_help(group)
 
-		show_help = ':question:│ `Usage: +invite `\n:grey_exclamation:│ `Result: Posts the bot invitation link`'
+		entries = await self.filter_commands(subcommands, sort=True)
+		pages = HelpPaginator(self, self.context, entries)
+		self.common_command_formatting(pages, group)
 
-	elif help_to_display == 'ban':
+		await pages.paginate()
 
-		show_help = ':question:│ `Usage: +ban <member> <reason> <delete_message_days> `\n:grey_exclamation:│ `Result: Bans a member`'
-
-	elif help_to_display == 'unban':
-
-		show_help = ':question:│ `Usage: +unban <id> <reason> `\n:grey_exclamation:│ `Result: Unbans a member`'
-
-	elif help_to_display == 'kick':
-
-		show_help = ':question:│ `Usage: +kick <member> <reason> `\n:grey_exclamation:│ `Result: Kicks a member`'
-
-	elif help_to_display == 'dab':
-
-		show_help = ':question:│ `Usage: +dab <anything> `\n:grey_exclamation:│ `Result: Dabs on the haters`'
-
-	elif help_to_display == 'mitochondria':
-
-		show_help = ':question:│ `Usage: +mitochondria `\n:grey_exclamation:│ `Result: Posts a secret message to ISIS`'
-
-	elif help_to_display == 'literallyme':
-
-		show_help = ':question:│ `Usage: +literallyme `\n:grey_exclamation:│ `Result: Posts a relatable picture`'
-
-	elif help_to_display == 'github':
-
-		show_help = ':question:│ `Usage: +github `\n:grey_exclamation:│ `Result: Posts the bot github link`'
-
-	elif help_to_display == 'onedeag':
-
-		show_help = ':question:| `Usage: +onedeag`\n:grey_exclamation:| `Result: One deags a random guild member`'
-
-	elif help_to_display == 'spotify':
-
-		show_help = ':question:| `Usage: +spotify <member>`\n:grey_exclamation:| `Result: Displays the current song the user is listening to`'
-
-	elif help_to_display == 'createinvite':
-
-		show_help = ':question:| `Usage: +createinvite`\n:grey_exclamation:| `Result: Creates an invite for the channel the command is ran`'
-
-	elif help_to_display == 'nani':
-
-		show_help = ':question:| `Usage: +nani <member>`\n:grey_exclamation:| `Result: Nani!?`'
-
-	elif help_to_display == 'hide':
-
-		show_help = ':question:| `Usage: +hide`\n:grey_exclamation:| `Result: Hides the bot as a reaction to a random old message (last 30). Click the reaction to win!`'
-
-	else:
-
-		show_help = ':warning: **Command not found.**'
-
-class HelpCog(commands.Cog):
+class Help(commands.Cog):
 
 	def __init__(self, bot):
 		self.bot = bot
+		self.old_help_command = bot.help_command
+		bot.help_command = PaginatedHelpCommand()
+		bot.help_command.cog = self
 
-	@commands.command(name='help')
-	async def help(self, ctx, h_command = None):
-
-		display_help(h_command)
-		await ctx.message.add_reaction("❔")
-		embed=discord.Embed(title="Commands List", description=show_help, color=0x0080c0)
-		embed.set_footer(text="Type +help <command> for the usage of a command | Coded by supr3me", icon_url=self.bot.user.avatar_url)
-		await ctx.author.send(embed=embed)
+	def cog_unload(self):
+		self.bot.help_command = self.old_help_command
 
 def setup(bot):
-	bot.remove_command('help')
-	bot.add_cog(HelpCog(bot))
+	bot.add_cog(Help(bot))
