@@ -6,7 +6,7 @@ import aiohttp
 import urllib.request
 import os
 
-class CaseOpeningCog(commands.Cog):
+class CaseOpening(commands.Cog):
 
 	def __init__(self, bot):
 		self.bot = bot
@@ -15,7 +15,7 @@ class CaseOpeningCog(commands.Cog):
 	@commands.guild_only()
 	@commands.cooldown(1, 8, commands.BucketType.user)
 	async def opencase(self, ctx, opencase_set='default'):
-
+			"""Opens a CS:GO case or pin capsule"""
 			member = ctx.author
 
 			#Case Opening Items
@@ -758,4 +758,4 @@ class CaseOpeningCog(commands.Cog):
 			await msg.edit(content="", embed=case_opening_showdrop_min)
 
 def setup(bot):
-	bot.add_cog(CaseOpeningCog(bot))
+	bot.add_cog(CaseOpening(bot))
