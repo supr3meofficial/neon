@@ -171,7 +171,6 @@ class AdminTools(commands.Cog):
 		msg.author = channel.guild.get_member(who.id) or who
 		msg.content = ctx.prefix + command
 		new_ctx = await self.bot.get_context(msg, cls=type(ctx))
-		new_ctx._db = ctx._db
 		await self.bot.invoke(new_ctx)
 
 def setup(bot):
