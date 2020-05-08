@@ -64,27 +64,29 @@ class UtilTools(commands.Cog):
 	@commands.guild_only()
 	async def spotify(self, ctx, member: discord.Member):
 		"""Displays the current song the user is listening to"""
+		spotify = None
+		# Find spotify activity
+		for activity in member.activities:
+			if type(activity) == discord.activity.Spotify:
+				spotify = activity
+		# If not found, return user is not listening to Spotify
+		if not spotify: return await ctx.send("User is not listening to Spotify :(",delete_after=5)
+		
+		requested_by = f"Requested by {ctx.author.name}"
+		listener = f"{member.name} is listening to:"
+		duration = str(spotify.duration).split(".")[0]
+		artists = str(spotify.artist).replace(";",",")
+		SPOTIFY_ICON = 'https://images-eu.ssl-images-amazon.com/images/I/51rttY7a%2B9L.png'
 
-		try:
-			 spotify = member.activities[1] # Check if user is listening to Spotify
-			 requested_by = f"Requested by {ctx.author.name}"
-			 listener = f"{member.name} is listening to:"
-			 duration = str(spotify.duration).split(".")[0]
-			 artists = str(spotify.artist).replace(";",",")
-			 SPOTIFY_ICON = 'https://images-eu.ssl-images-amazon.com/images/I/51rttY7a%2B9L.png'
-
-			 embed = discord.Embed(title="", description="", colour=spotify.colour)
-			 embed.set_author(icon_url=SPOTIFY_ICON, name=listener)
-			 embed.set_thumbnail(url=spotify.album_cover_url)
-			 embed.add_field(name="Title:", value=spotify.title, inline=False)
-			 embed.add_field(name="Artists:", value=artists, inline=False)
-			 embed.add_field(name="Album:", value=spotify.album, inline=False)
-			 embed.add_field(name="Duration:", value=duration, inline=False)
-			 embed.set_footer(text=requested_by)
-			 await ctx.send(embed=embed)
-		except:
-			return await ctx.send("User is not listening to Spotify :(",delete_after=5)
-
+		embed = discord.Embed(title="", description="", colour=spotify.colour)
+		embed.set_author(icon_url=SPOTIFY_ICON, name=listener)
+		embed.set_thumbnail(url=spotify.album_cover_url)
+		embed.add_field(name="Title:", value=spotify.title, inline=False)
+		embed.add_field(name="Artists:", value=artists, inline=False)
+		embed.add_field(name="Album:", value=spotify.album, inline=False)
+		embed.add_field(name="Duration:", value=duration, inline=False)
+		embed.set_footer(text=requested_by)
+		await ctx.send(embed=embed)
 
 	@commands.command(name='createinvite',aliases=['createinv'])
 	@commands.guild_only()
