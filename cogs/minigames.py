@@ -6,38 +6,6 @@ import logging
 
 log = logging.getLogger(__name__)
 
-async def track_animation(trackracer, ctx):
-
-	anim = ["<:raceflags:433061672387739650> :wavy_dash::wavy_dash::wavy_dash::wavy_dash::wavy_dash: <:Audi:433020256521551893>",
-	"<:raceflags:433061672387739650> :wavy_dash::wavy_dash::wavy_dash::wavy_dash: <:Audi:433020256521551893>",
-	"<:raceflags:433061672387739650> :wavy_dash::wavy_dash::wavy_dash: <:Audi:433020256521551893>",
-	"<:raceflags:433061672387739650> :wavy_dash::wavy_dash: <:Audi:433020256521551893>",
-	"<:raceflags:433061672387739650> :wavy_dash: <:Audi:433020256521551893>",
-	"<:raceflags:433061672387739650> <:Audi:433020256521551893>"]
-
-	def tracksleeper():
-		return random.randint(1,10)
-
-	member = ctx.author
-	membercar = "{}'s car".format(member.name)
-	totaltracksleep = 0
-
-	for step in anim:
-		embed = discord.Embed(title="", description=step, colour=member.colour)
-		embed.set_author(icon_url=member.avatar_url, name=membercar)
-		trackmsg = await ctx.send(embed=embed)
-		tracksleep = tracksleeper()
-		await asyncio.sleep(tracksleep)
-		totaltracksleep += tracksleep
-
-	await asyncio.sleep(1)
-	laptime = "{} seconds".format(totaltracksleep)
-	embed = discord.Embed(title="", description="", colour=member.colour)
-	embed.set_author(icon_url=member.avatar_url, name=membercar)
-	embed.set_thumbnail(url="https://twemoji.maxcdn.com/2/72x72/23f1.png")
-	embed.add_field(name="Lap Time:", value=laptime, inline=False)
-	await trackmsg.edit(embed=embed)
-
 class Minigames(commands.Cog):
 
 	def __init__(self, bot):
@@ -47,7 +15,52 @@ class Minigames(commands.Cog):
 	@commands.guild_only()
 	async def race(self, ctx):
 		"""Does a random lap time with a car"""
-		await track_animation(ctx.author.mention, ctx)
+		animations = [
+		"<:raceflags:433061672387739650> :wavy_dash::wavy_dash::wavy_dash::wavy_dash::wavy_dash: <:Audi:433020256521551893>",
+		"<:raceflags:433061672387739650> :wavy_dash::wavy_dash::wavy_dash::wavy_dash: <:Audi:433020256521551893>",
+		"<:raceflags:433061672387739650> :wavy_dash::wavy_dash::wavy_dash: <:Audi:433020256521551893>",
+		"<:raceflags:433061672387739650> :wavy_dash::wavy_dash: <:Audi:433020256521551893>",
+		"<:raceflags:433061672387739650> :wavy_dash: <:Audi:433020256521551893>",
+		"<:raceflags:433061672387739650> <:Audi:433020256521551893>"
+		]
+		car_speed_by_step = []
+		total_car_speed_by_step = 0
+
+		member = ctx.author
+		total_time = 0
+
+		embed = discord.Embed(
+		title="",
+		description="",
+		colour=member.colour)
+		embed.set_author(
+		icon_url=member.avatar_url,
+		name=f"{member.name}'s car")
+
+		game_object = await ctx.send(embed=embed)
+
+		for animation_speed in animations:
+			car_speed_by_step.append(random.randint(1,10))
+		for speed_by_step in car_speed_by_step:
+			total_car_speed_by_step += speed_by_step
+
+		i = 0
+		for next_animation in animations:
+			embed.description = next_animation
+			await game_object.edit(embed=embed)
+			await asyncio.sleep(car_speed_by_step[i])
+			total_time += car_speed_by_step[i]
+			i += 1
+
+		await asyncio.sleep(1)
+
+		embed.description = ""
+		embed.set_thumbnail(url="https://twemoji.maxcdn.com/2/72x72/23f1.png")
+		embed.add_field(name="Lap Time:", value=f'{total_time} seconds', inline=False)
+		embed.add_field(name="Distance:", value=f'600 meters', inline=False)
+		embed.add_field(name="Average Speed:", value=f'{int((600/total_car_speed_by_step)*3.6)} Km/h', inline=False)
+
+		await game_object.edit(embed=embed)
 
 	@commands.command(name='hide')
 	@commands.guild_only()
