@@ -56,7 +56,7 @@ class Neon(commands.Bot):
 				print(f'Failed to load extension {extension}.', file=sys.stderr)
 				traceback.print_exc()
 
-	async def on_command_error(ctx, error):
+	async def on_command_error(self, ctx, error):
 	    # Return in local command handler
 	    if hasattr(ctx.command, 'on_error'):
 	        return
