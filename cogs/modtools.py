@@ -19,45 +19,64 @@ log = logging.getLogger(__name__)
 
 # Converters
 
-class MemberID(commands.Converter):
-	async def convert(self, ctx, argument):
-		try:
-			m = await commands.MemberConverter().convert(ctx, argument)
-		except commands.BadArgument:
-			try:
-				member_id = int(argument, base=10)
-				m = await resolve_member(ctx.guild, member_id)
-			except ValueError:
-				raise commands.BadArgument(f"{argument} is not a valid member or member ID.") from None
-			except MemberNotFound:
-				# hackban case
-				return type('_Hackban', (), {'id': member_id, '__str__': lambda s: f'Member ID {s.id}'})()
+def can_execute_action(ctx, user, target):
+    return user.id == ctx.bot.owner_id or \
+           user == ctx.guild.owner or \
+           user.top_role > target.top_role
 
-		if not can_execute_action(ctx, ctx.author, m):
-			raise commands.BadArgument('You cannot do this action on this user due to role hierarchy.')
-		return m
+class MemberNotFound(Exception):
+    pass
+
+async def resolve_member(guild, member_id):
+    member = guild.get_member(member_id)
+    if member is None:
+        if guild.chunked:
+            raise MemberNotFound()
+        try:
+            member = await guild.fetch_member(member_id)
+        except discord.NotFound:
+            raise MemberNotFound() from None
+    return member
+
+class MemberID(commands.Converter):
+    async def convert(self, ctx, argument):
+        try:
+            m = await commands.MemberConverter().convert(ctx, argument)
+        except commands.BadArgument:
+            try:
+                member_id = int(argument, base=10)
+                m = await resolve_member(ctx.guild, member_id)
+            except ValueError:
+                raise commands.BadArgument(f"{argument} is not a valid member or member ID.") from None
+            except MemberNotFound:
+                # hackban case
+                return type('_Hackban', (), {'id': member_id, '__str__': lambda s: f'Member ID {s.id}'})()
+
+        if not can_execute_action(ctx, ctx.author, m):
+            raise commands.BadArgument('You cannot do this action on this user due to role hierarchy.')
+        return m
 
 class BannedMember(commands.Converter):
-	async def convert(self, ctx, argument):
-		ban_list = await ctx.guild.bans()
-		try:
-			member_id = int(argument, base=10)
-			entity = discord.utils.find(lambda u: u.user.id == member_id, ban_list)
-		except ValueError:
-			entity = discord.utils.find(lambda u: str(u.user) == argument, ban_list)
+    async def convert(self, ctx, argument):
+        ban_list = await ctx.guild.bans()
+        try:
+            member_id = int(argument, base=10)
+            entity = discord.utils.find(lambda u: u.user.id == member_id, ban_list)
+        except ValueError:
+            entity = discord.utils.find(lambda u: str(u.user) == argument, ban_list)
 
-		if entity is None:
-			raise commands.BadArgument("Not a valid previously-banned member.")
-		return entity
+        if entity is None:
+            raise commands.BadArgument("Not a valid previously-banned member.")
+        return entity
 
 class ActionReason(commands.Converter):
-	async def convert(self, ctx, argument):
-		ret = f'{ctx.author} (ID: {ctx.author.id}): {argument}'
+    async def convert(self, ctx, argument):
+        ret = f'{ctx.author} (ID: {ctx.author.id}): {argument}'
 
-		if len(ret) > 512:
-			reason_max = 512 - len(ret) + len(argument)
-			raise commands.BadArgument(f'Reason is too long ({len(argument)}/{reason_max})')
-		return ret
+        if len(ret) > 512:
+            reason_max = 512 - len(ret) + len(argument)
+            raise commands.BadArgument(f'Reason is too long ({len(argument)}/{reason_max})')
+        return ret
 
 # cog
 
@@ -66,6 +85,23 @@ class ModTools(commands.Cog):
 
 	def __init__(self, bot):
 		self.bot = bot
+
+	def _create_embed(self, ctx, member, action, custom_desc=None):
+		"""Embed creation helper for basic embeds"""
+		desc = {
+		"ban" : "has been banned",
+		"kick" : "has been kicked",
+		"softban" : "has been soft banned"
+		}
+
+		embed = discord.Embed(
+		title='',
+		colour=discord.Color.red())
+		embed.description=f"➜ {(member, desc[action]) if not custom_desc else custom_desc}"
+		embed.set_author(name=f'Moderation Tools')
+		embed.set_footer(text=f'Action performed by {ctx.author}')
+
+		return embed
 
 	@commands.command(aliases=['newmembers'])
 	@commands.guild_only()
@@ -154,13 +190,7 @@ class ModTools(commands.Cog):
 			reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
 		await ctx.guild.kick(member, reason=reason)
-
-		embed = discord.Embed(title='',
-		description="<:BanHammer:439943003847786499> {member} has been kicked",
-		colour=ctx.author.colour)
-		embed.set_author(icon_url=member.avatar_url, name=user_banned)
-
-		await ctx.send(embed=embed)
+		await ctx.send(embed=self._create_embed(ctx, member, 'kick'))
 
 	@commands.command()
 	@commands.guild_only()
@@ -180,13 +210,8 @@ class ModTools(commands.Cog):
 			reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
 		await ctx.guild.ban(member, reason=reason)
+		await ctx.send(embed=self._create_embed(ctx, member, 'ban'))
 
-		embed = discord.Embed(title='',
-		description="<:BanHammer:439943003847786499> `{member}` has been banned",
-		colour=ctx.author.colour)
-		embed.set_author(icon_url=member.avatar_url, name=user_banned)
-
-		await ctx.send('\N{OK HAND SIGN}')
 
 	@commands.command()
 	@commands.guild_only()
@@ -219,12 +244,7 @@ class ModTools(commands.Cog):
 			except discord.HTTPException:
 				failed += 1
 
-		embed = discord.Embed(title='',
-		description=f"<:BanHammer:439943003847786499> Banned {total_members - failed}/{total_members} members.",
-		colour=ctx.author.colour)
-		embed.set_author(icon_url=member.avatar_url, name=user_banned)
-
-		await ctx.send(embed=embed)
+		await ctx.send(embed=self._create_embed(ctx, None, None, f'Banned {total_members - failed}/{total_members} members'))
 
 	@commands.command()
 	@commands.guild_only()
@@ -413,7 +433,7 @@ class ModTools(commands.Cog):
 			else:
 				count += 1
 
-		await ctx.send(f'Banned {count}/{len(members)}')
+		await ctx.send(embed=self._create_embed(ctx, None, None, f'Banned {count}/{len(members)}'))
 
 	@commands.command()
 	@commands.guild_only()
@@ -435,13 +455,7 @@ class ModTools(commands.Cog):
 
 		await ctx.guild.ban(member, reason=reason)
 		await ctx.guild.unban(member, reason=reason)
-
-		embed = discord.Embed(title='',
-		description=f"<:BanHammer:439943003847786499> Soft banned {member}",
-		colour=ctx.author.colour)
-		embed.set_author(icon_url=member.avatar_url, name=user_banned)
-
-		await ctx.send(embed=embed)
+		await ctx.send(embed=self._create_embed(ctx, member, 'softban'))
 
 	@commands.command()
 	@commands.guild_only()
@@ -466,12 +480,7 @@ class ModTools(commands.Cog):
 		else:
 			r = f'Unbanned {member.user} (ID: {member.user.id})'
 
-		if r:
-			embed = discord.Embed(title='',
-			description=r,
-			colour=ctx.author.colour)
-			embed.set_author(icon_url=member.avatar_url, name=user_banned)
-			await ctx.send(embed=embed)
+		await ctx.send(embed=self._create_embed(ctx, member, 'unban'))
 
 def setup(bot):
 	bot.add_cog(ModTools(bot))
