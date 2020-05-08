@@ -20,63 +20,63 @@ log = logging.getLogger(__name__)
 # Converters
 
 def can_execute_action(ctx, user, target):
-    return user.id == ctx.bot.owner_id or \
-           user == ctx.guild.owner or \
-           user.top_role > target.top_role
+	return user.id == ctx.bot.owner_id or \
+		   user == ctx.guild.owner or \
+		   user.top_role > target.top_role
 
 class MemberNotFound(Exception):
-    pass
+	pass
 
 async def resolve_member(guild, member_id):
-    member = guild.get_member(member_id)
-    if member is None:
-        if guild.chunked:
-            raise MemberNotFound()
-        try:
-            member = await guild.fetch_member(member_id)
-        except discord.NotFound:
-            raise MemberNotFound() from None
-    return member
+	member = guild.get_member(member_id)
+	if member is None:
+		if guild.chunked:
+			raise MemberNotFound()
+		try:
+			member = await guild.fetch_member(member_id)
+		except discord.NotFound:
+			raise MemberNotFound() from None
+	return member
 
 class MemberID(commands.Converter):
-    async def convert(self, ctx, argument):
-        try:
-            m = await commands.MemberConverter().convert(ctx, argument)
-        except commands.BadArgument:
-            try:
-                member_id = int(argument, base=10)
-                m = await resolve_member(ctx.guild, member_id)
-            except ValueError:
-                raise commands.BadArgument(f"{argument} is not a valid member or member ID.") from None
-            except MemberNotFound:
-                # hackban case
-                return type('_Hackban', (), {'id': member_id, '__str__': lambda s: f'Member ID {s.id}'})()
+	async def convert(self, ctx, argument):
+		try:
+			m = await commands.MemberConverter().convert(ctx, argument)
+		except commands.BadArgument:
+			try:
+				member_id = int(argument, base=10)
+				m = await resolve_member(ctx.guild, member_id)
+			except ValueError:
+				raise commands.BadArgument(f"{argument} is not a valid member or member ID.") from None
+			except MemberNotFound:
+				# hackban case
+				return type('_Hackban', (), {'id': member_id, '__str__': lambda s: f'Member ID {s.id}'})()
 
-        if not can_execute_action(ctx, ctx.author, m):
-            raise commands.BadArgument('You cannot do this action on this user due to role hierarchy.')
-        return m
+		if not can_execute_action(ctx, ctx.author, m):
+			raise commands.BadArgument('You cannot do this action on this user due to role hierarchy.')
+		return m
 
 class BannedMember(commands.Converter):
-    async def convert(self, ctx, argument):
-        ban_list = await ctx.guild.bans()
-        try:
-            member_id = int(argument, base=10)
-            entity = discord.utils.find(lambda u: u.user.id == member_id, ban_list)
-        except ValueError:
-            entity = discord.utils.find(lambda u: str(u.user) == argument, ban_list)
+	async def convert(self, ctx, argument):
+		ban_list = await ctx.guild.bans()
+		try:
+			member_id = int(argument, base=10)
+			entity = discord.utils.find(lambda u: u.user.id == member_id, ban_list)
+		except ValueError:
+			entity = discord.utils.find(lambda u: str(u.user) == argument, ban_list)
 
-        if entity is None:
-            raise commands.BadArgument("Not a valid previously-banned member.")
-        return entity
+		if entity is None:
+			raise commands.BadArgument("Not a valid previously-banned member.")
+		return entity
 
 class ActionReason(commands.Converter):
-    async def convert(self, ctx, argument):
-        ret = f'{ctx.author} (ID: {ctx.author.id}): {argument}'
+	async def convert(self, ctx, argument):
+		ret = f'{ctx.author} (ID: {ctx.author.id}): {argument}'
 
-        if len(ret) > 512:
-            reason_max = 512 - len(ret) + len(argument)
-            raise commands.BadArgument(f'Reason is too long ({len(argument)}/{reason_max})')
-        return ret
+		if len(ret) > 512:
+			reason_max = 512 - len(ret) + len(argument)
+			raise commands.BadArgument(f'Reason is too long ({len(argument)}/{reason_max})')
+		return ret
 
 # cog
 
@@ -93,11 +93,11 @@ class ModTools(commands.Cog):
 		"kick" : "has been kicked",
 		"softban" : "has been soft banned"
 		}
-
+		action_on_member = f"{member} {desc[action]}"
 		embed = discord.Embed(
 		title='',
 		colour=discord.Color.red())
-		embed.description=f"➜ {(member, desc[action]) if not custom_desc else custom_desc}"
+		embed.description=f"➜ {action_on_member if not custom_desc else custom_desc}"
 		embed.set_author(name=f'Moderation Tools')
 		embed.set_footer(text=f'Action performed by {ctx.author}')
 
@@ -189,7 +189,7 @@ class ModTools(commands.Cog):
 		if reason is None:
 			reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
-		await ctx.guild.kick(member, reason=reason)
+		#await ctx.guild.kick(member, reason=reason)
 		await ctx.send(embed=self._create_embed(ctx, member, 'kick'))
 
 	@commands.command()
