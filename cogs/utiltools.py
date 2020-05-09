@@ -1,6 +1,8 @@
 import discord
 import random
 from discord.ext import commands
+from .utils import checks, time
+import datetime
 import aiohttp
 import asyncio
 from typing import Union, Optional
@@ -71,7 +73,7 @@ class UtilTools(commands.Cog):
 				spotify = activity
 		# If not found, return user is not listening to Spotify
 		if not spotify: return await ctx.send("User is not listening to Spotify :(",delete_after=5)
-		
+
 		requested_by = f"Requested by {ctx.author.name}"
 		listener = f"{member.name} is listening to:"
 		duration = str(spotify.duration).split(".")[0]
@@ -90,14 +92,40 @@ class UtilTools(commands.Cog):
 
 	@commands.command(name='createinvite',aliases=['createinv'])
 	@commands.guild_only()
-	async def _create_invite(self, ctx, channel: Optional[GlobalChannel]):
-		"""Creates an invite for a channel"""
-		requested_by = f"Requested by {ctx.author.name}"
-		channel = ctx.channel
-		inv = await channel.create_invite(reason="Created via command")
-		embed = discord.Embed(title="Invite Created", description=inv.url, color=ctx.author.colour)
-		embed.set_thumbnail(url="https://twemoji.maxcdn.com/2/72x72/1f517.png")
-		embed.set_footer(text=requested_by)
+	@checks.has_permissions(create_instant_invite=True)
+	async def _create_invite(self, ctx, channel: Optional[GlobalChannel], max_age: time.FutureTime = 0, max_uses: int = 0):
+		"""Creates an invite for a channel
+
+		Max custom expiry date is 1d
+		Max custom uses is 100
+		"""
+		if not channel: channel = ctx.channel
+
+		oneday = datetime.timedelta(days=1)
+		now = datetime.datetime.utcnow()
+		td1 = max_age.dt.replace(microsecond=0) - datetime.timedelta(seconds=1) # Account for extra second
+		td2 = now.replace(microsecond=0)
+		td3 = td1 - td2
+		expires_in = time.human_timedelta(td1)
+
+		if td3 > oneday:
+			await ctx.send('Expiry date cannot be more than 1 day',delete_after=10)
+		else:
+			max_age = td3.total_seconds()
+		if max_uses > 100:
+			 await ctx.send('Max uses cannot be more than 1000',delete_after=10)
+
+		inv = await channel.create_invite(reason=f"{ctx.author} has created an invite", max_age=max_age, max_uses=max_uses)
+
+		embed = discord.Embed(
+		title='Invite Created',
+		description='',
+		color=ctx.author.color)
+		embed.add_field(name='Author:', value=ctx.author, inline=False)
+		embed.add_field(name='Link:', value=inv.url, inline=False)
+		embed.add_field(name='Channel:', value=inv.channel, inline=False)
+		embed.add_field(name='Expires in:', value=f'{expires_in if max_age != 0 else "Never"}', inline=False)
+		embed.add_field(name='Max Uses:', value=f'{max_uses if max_uses != 0 else "Infinite"}', inline=False)
 		await ctx.send(embed=embed)
 
 	@commands.command()
