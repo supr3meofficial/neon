@@ -189,7 +189,7 @@ class ModTools(commands.Cog):
 		if reason is None:
 			reason = f'Action done by {ctx.author} (ID: {ctx.author.id})'
 
-		#await ctx.guild.kick(member, reason=reason)
+		await ctx.guild.kick(member, reason=reason)
 		await ctx.send(embed=self._create_embed(ctx, member, 'kick'))
 
 	@commands.command()
