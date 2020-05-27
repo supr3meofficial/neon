@@ -13,13 +13,9 @@ class Fun(commands.Cog):
 	@commands.command()
 	@commands.guild_only()
 	async def onedeag(self, ctx, member: discord.Member = None):
-		"""Pops a one-deag on a random/specific guild member"""
-		member = ctx.author
-		members = ctx.guild.members
-
-		if member == None:
-			member = random.choice(members)
-		member = member.name
+		"""Pops a one-deag on someone"""
+		if member is None:
+			member = random.choice(ctx.guild.members)
 
 		deags = ["https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_gs_deagle_aggressor_light_large.51ffb87f03ae0d3c467d4412f3c246067748e61d.png",
 				"https://steamcdn-a.akamaihd.net/apps/730/icons/econ/default_generated/weapon_deagle_am_scales_bravo_light_large.6cba46695e74a8bee932ea90cea24e146cbef5e7.png",
@@ -50,10 +46,10 @@ class Fun(commands.Cog):
 				"https://csgostash.com/img/weapons/Desert_Eagle.png"]
 
 		deag = random.choice(deags)
-		embed = discord.Embed(title="", description="", colour=member.colour)
-		embed.set_author(icon_url=member.avatar_url, name=str(member))
+		embed = discord.Embed(title="", description="", color=ctx.author.color)
+		embed.set_author(icon_url=member.avatar_url, name=member.name)
 		embed.set_thumbnail(url=deag)
-		embed.add_field(name="You have popped a one deag on:", value=member, inline=True)
+		embed.add_field(name="You have popped a one deag on:", value=member.name, inline=True)
 		await ctx.send(embed=embed)
 
 	@commands.command()
