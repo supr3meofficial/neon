@@ -79,9 +79,9 @@ class AdminTools(commands.Cog):
 		else:
 			await ctx.send(f'**ADMIN:** Reloaded {module}')
 
-	@commands.command(name='spam', aliases=['say'], delete_after=True, hidden=True)
+	@commands.command(name='spam', aliases=['say'], hidden=True)
 	@commands.is_owner()
-	async def spam(self, ctx, amount, **content : str):
+	async def spam(self, ctx, amount, delete_after : bool, *, content : str):
 		"""Spams a certain message"""
 		if delete_after:
 			await ctx.message.delete()
@@ -202,18 +202,19 @@ class AdminTools(commands.Cog):
 
 		channel_info = []
 		key_to_emoji = {
-			discord.TextChannel: '<:text_channel:586339098172850187>',
-			discord.VoiceChannel: '<:voice_channel:586339098524909604>',
+			discord.TextChannel: ['<:channel:711201275319943179>', '<:lockedchannel:711201275202633800>'],
+			discord.VoiceChannel: ['<:voicechannel:711201275319943219>', ' <:lockedvoicechannel:711201275223605330>'],
 		}
 		for key, total in totals.items():
 			secrets = secret[key]
 			try:
-				emoji = key_to_emoji[key]
+				emoji = key_to_emoji[key][0]
+				emoji2 = key_to_emoji[key][1]
 			except KeyError:
 				continue
 
 			if secrets:
-				channel_info.append(f'{emoji} {total} ({secrets} locked)')
+				channel_info.append(f'{emoji} {total}\n{emoji2} {secrets}')
 			else:
 				channel_info.append(f'{emoji} {total}')
 
@@ -242,7 +243,7 @@ class AdminTools(commands.Cog):
 		if info:
 			e.add_field(name='Features', value='\n'.join(info))
 
-		e.add_field(name='Channels', value='\n'.join(channel_info))
+		e.add_field(name='Channels', value='\n'.join(channel_info), inline=False)
 
 		if guild.premium_tier != 0:
 			boosts = f'Level {guild.premium_tier}\n{guild.premium_subscription_count} boosts'
@@ -251,11 +252,11 @@ class AdminTools(commands.Cog):
 				boosts = f'{boosts}\nLast Boost: {last_boost} ({utiltime.human_timedelta(last_boost.premium_since, accuracy=2)})'
 			e.add_field(name='Boosts', value=boosts, inline=False)
 
-		fmt = f'<:online:316856575413321728> {member_by_status["online"]} ' \
-			  f'<:idle:316856575098880002> {member_by_status["idle"]} ' \
-			  f'<:dnd:316856574868193281> {member_by_status["dnd"]} ' \
-			  f'<:offline:316856575501402112> {member_by_status["offline"]}\n' \
-			  f'Total: {guild.member_count}'
+		fmt = f'👤 Total: {guild.member_count} \n\n' \
+		f'<:online:711201275353497671> {member_by_status["online"]} ' \
+		f'<:idle:711201275202502658> {member_by_status["idle"]} ' \
+		f'<:dnd:711201275110490177> {member_by_status["dnd"]} ' \
+		f'<:offline:711201275412217896> {member_by_status["offline"]}'
 
 		e.add_field(name='Members', value=fmt, inline=False)
 		e.add_field(name='Roles', value=', '.join(roles) if len(roles) < 10 else f'{len(roles)} roles')
@@ -296,7 +297,7 @@ class AdminTools(commands.Cog):
 
 		await self.say_permissions(ctx, member, channel)
 
-	@commands.command(alhidden=True)
+	@commands.command(hidden=True)
 	@commands.guild_only()
 	@commands.is_owner()
 	async def botpermissions(self, ctx, *, channel: discord.TextChannel = None):
@@ -338,6 +339,7 @@ class AdminTools(commands.Cog):
 		await self.say_permissions(ctx, member, channel)
 
 	@commands.command(hidden=True)
+	@commands.is_owner()
 	async def sudo(self, ctx, channel: Optional[GlobalChannel], who: discord.User, *, command: str):
 		"""Run a command as another user optionally in another channel."""
 		msg = copy.copy(ctx.message)
