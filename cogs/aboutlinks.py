@@ -27,5 +27,11 @@ class InfoLinks(commands.Cog):
         embed=discord.Embed(title="<:GitHub:449612764751593472> GitHub", url="https://github.com/supr3meofficial/neon", description="Click this link to see my insides", color=0x80ff00)
         await ctx.send(embed=embed)
 
+    @commands.command()
+    async def discord(self, ctx):
+        """Neon discord link"""
+        embed=discord.Embed(title="<:discord:434011189656158219> Discord", url="https://discord.gg/qDszrcF", description="Click this link to join the official Neon Discord server", color=0x80ff00)
+        await ctx.send(embed=embed)
+
 def setup(bot):
     bot.add_cog(InfoLinks(bot))
