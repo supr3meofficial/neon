@@ -138,7 +138,7 @@ class CaseOpening(commands.Cog):
 	@open_.command(name='menu')
 	async def menu(self, ctx):
 		what_to_open = await self.show_main_menu(ctx)
-		if what_to_open == 'case': await self.open_case()
+		if what_to_open == 'case': await self.open_case(ctx)
 		else: pass
 
 	@open_.command(name='case')
