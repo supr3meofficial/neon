@@ -100,20 +100,20 @@ class UtilTools(commands.Cog):
 		Max custom uses is 100
 		"""
 		if not channel: channel = ctx.channel
+		if max_age != 0:
+			oneday = datetime.timedelta(days=1)
+			now = datetime.datetime.utcnow()
+			td1 = max_age.dt.replace(microsecond=0) - datetime.timedelta(seconds=1) # Account for extra second
+			td2 = now.replace(microsecond=0)
+			td3 = td1 - td2
+			expires_in = time.human_timedelta(td1)
 
-		oneday = datetime.timedelta(days=1)
-		now = datetime.datetime.utcnow()
-		td1 = max_age.dt.replace(microsecond=0) - datetime.timedelta(seconds=1) # Account for extra second
-		td2 = now.replace(microsecond=0)
-		td3 = td1 - td2
-		expires_in = time.human_timedelta(td1)
-
-		if td3 > oneday:
-			await ctx.send('Expiry date cannot be more than 1 day',delete_after=10)
-		else:
-			max_age = td3.total_seconds()
-		if max_uses > 100:
-			 await ctx.send('Max uses cannot be more than 1000',delete_after=10)
+			if td3 > oneday:
+				await ctx.send('Expiry date cannot be more than 1 day',delete_after=10)
+			else:
+				max_age = td3.total_seconds()
+			if max_uses > 100:
+				 await ctx.send('Max uses cannot be more than 1000',delete_after=10)
 
 		inv = await channel.create_invite(reason=f"{ctx.author} has created an invite", max_age=max_age, max_uses=max_uses)
 
