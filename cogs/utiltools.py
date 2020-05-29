@@ -87,6 +87,7 @@ class UtilTools(commands.Cog):
 		embed.add_field(name="Artists:", value=artists, inline=False)
 		embed.add_field(name="Album:", value=spotify.album, inline=False)
 		embed.add_field(name="Duration:", value=duration, inline=False)
+		embed.add_field(name="Track Link:", value=f'https://open.spotify.com/track/{spotify.track_id}', inline=False)
 		embed.set_footer(text=requested_by)
 		await ctx.send(embed=embed)
 
