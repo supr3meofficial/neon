@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from .utils import checks
 from .utils.paginator import FieldPages
 import random
 import asyncio
@@ -126,14 +127,20 @@ class CaseOpening(commands.Cog):
 
 	@commands.group(name='open')
 	@commands.guild_only()
-	@commands.cooldown(1, 8, commands.BucketType.user)
+	@commands.max_concurrency(1, per=commands.BucketType.user, wait=False)
+	@checks.member_in_guild(714585630289559664)
 	async def open_(self, ctx):
 		"""open case - Opens a CS:GO case"""
 		pass
 
-	async def cog_command_error(self, ctx, error):
+	@open_.error
+	async def command_error(self, ctx, error):
 		if isinstance(error, commands.MaxConcurrencyReached):
 			await ctx.send(content='You can only open 1 case at a time!',delete_after=5)
+		elif isinstance(error, checks.NotInGuild):
+			embed = discord.Embed(title='', description='This command is exclusive to Neon Lounge members. \nPlease join our discord here: https://discord.gg/qDszrcF', colour=ctx.author.color)
+			embed.set_author(icon_url=self.bot.user.avatar_url, name=self.bot.user.name)
+			await ctx.send(embed=embed)
 
 	@open_.command(name='menu')
 	async def menu(self, ctx):
@@ -142,7 +149,6 @@ class CaseOpening(commands.Cog):
 		else: pass
 
 	@open_.command(name='case')
-	@commands.max_concurrency(1, per=commands.BucketType.user, wait=False)
 	async def open_case(self, ctx, *, case : str = None):
 		"""Opens a CS:GO case or pin capsule"""
 		global selected_case
@@ -158,25 +164,20 @@ class CaseOpening(commands.Cog):
 		# Handle case contents
 		can_be_stattrak = True
 		case_data = DataHandler().get_case_skins(selected_case)
-		knives = case_data['content']['Knives']
-		gloves = case_data['content']['Gloves']
-		if len(knives) != 0:
-			special_items = knives
-		elif len(gloves) != 0:
-			special_items = gloves
-			can_be_stattrak = False
 		if selected_case != 'X-Ray P250 Package':
+			special_items = case_data['content']['Rare Special Items']
 			covert_skins = case_data['content']['Covert Skins']
 			classified_skins = case_data['content']['Classified Skins']
 			milspec_skins = case_data['content']['Mil-Spec Skins']
 		restricted_skins = case_data['content']['Restricted Skins']
 
 		# StatTrak™ Odds
-		st = ''
-		if can_be_stattrak:
-			st_odds = random.randint(0,10)
-			if st_odds == 10: st = 'StatTrak™'
-			else: st = ''
+		def set_stattrak(item_name, rarity):
+			if not "Gloves" in item_name and rarity == 'covert':
+				st_odds = random.randint(0,10)
+				if st_odds == 10:
+					return 'StatTrak™'
+			return ''
 
 		# Rarity Odds
 		drop_odds = random.randint(0,100)
@@ -209,7 +210,7 @@ class CaseOpening(commands.Cog):
 		skin_image = skin_wears[skin_wear]
 		skin_desc = selected_skin_data['desc']
 		skin_lore = selected_skin_data['lore']
-		skin_name = f'{st} {skin_title} {wear[skin_wear]}'
+		skin_name = f'{set_stattrak(skin_title, tier)} {skin_title} {wear[skin_wear]}'
 
 		# Skin Tier and Embed Colour
 		def tier_colour():
@@ -293,6 +294,14 @@ class CaseOpening(commands.Cog):
 			tier = 'restricted'
 			selected_skin_data = restricted_skins[0]
 
+		# StatTrak™ Odds
+		def set_stattrak(item_name, rarity):
+			if not "Gloves" in item_name and rarity == 'covert':
+				st_odds = random.randint(0,10)
+				if st_odds == 10:
+					return 'StatTrak™'
+			return ''
+
 		skin_title = selected_skin_data['title']
 		skin_wears = selected_skin_data['possible_wears']
 		skin_wear = random.choice(list(skin_wears.keys()))
@@ -300,7 +309,8 @@ class CaseOpening(commands.Cog):
 		skin_image = skin_wears[skin_wear]
 		skin_desc = selected_skin_data['desc']
 		skin_lore = selected_skin_data['lore']
-		skin_name = f'{skin_title} {wear[skin_wear]}'
+		skin_name = f'{set_stattrak(skin_title, tier)} {skin_title} {wear[skin_wear]}'
+
 
 		# Skin Tier and Embed Colour
 		def tier_colour():
