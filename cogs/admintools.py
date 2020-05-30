@@ -350,5 +350,54 @@ class AdminTools(commands.Cog):
 		new_ctx = await self.bot.get_context(msg, cls=type(ctx))
 		await self.bot.invoke(new_ctx)
 
+	@commands.command(name='status', hidden=True)
+	@commands.is_owner()
+	async def set_bot_status(self, ctx, *, new_status: str):
+		# Replace strings with formatted value
+		fstrings = {
+		'[[guilds]]'    : str(len(self.bot.guilds)),
+		'[[users]]'     : str(len(self.bot.users)),
+		'<<playing>>'   : discord.ActivityType.playing,
+		'<<streaming>>' : discord.ActivityType.streaming,
+		'<<listening>>' : discord.ActivityType.listening,
+		'<<watching>>'  : discord.ActivityType.watching,
+		'$online'       : discord.Status.online,
+		'$idle'         : discord.Status.idle,
+		'$dnd'          : discord.Status.dnd,
+		'$invis'        : discord.Status.invisible
+		}
+		# Default values
+		activity_type = discord.ActivityType.playing
+		status = discord.Status.online
+		url = 'https://twitch.tv/supr3meofficial'
+		# Replace operation
+		for k,v in fstrings.items():
+			if k in new_status:
+				if '[' in k:
+					new_status = new_status.replace(k, v)
+				elif '<' in k:
+					activity_type = v
+					new_status = new_status.replace(k, '')
+				elif '$' in k:
+					status = v
+					new_status = new_status.replace(k, '')
+		if '!user=' in new_status:
+			_url = new_status.split('!user=')[1]
+			_new_status =_url.split('!')[0]
+			_url = _url.split('!')[0]
+			url = url.replace('supr3meofficial', _url)
+			new_status = new_status.replace(_url, '')
+			new_status = new_status.replace('!user=!', '')
+
+		# Change bot presence
+		new_activity = discord.Activity(name=new_status, type=activity_type, url=url)
+		await self.bot.change_presence(status=status, activity=new_activity)
+		embed = discord.Embed(title='', description='', colour=0x2ecc71)
+		embed.set_author(icon_url=self.bot.user.avatar_url, name='Updated Bot Status')
+		embed.add_field(name='Status', value=new_status, inline=True)
+		embed.add_field(name='Activity', value=str(activity_type).replace('ActivityType.',''), inline=True)
+		embed.add_field(name='Presence', value=str(status).replace('discord.Status.',''), inline=True)
+		await ctx.send(embed=embed)
+
 def setup(bot):
 	bot.add_cog(AdminTools(bot))
