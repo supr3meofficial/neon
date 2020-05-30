@@ -63,3 +63,14 @@ def is_in_guilds(*guild_ids):
             return False
         return guild.id in guild_ids
     return commands.check(predicate)
+
+class NotInGuild(commands.CheckFailure):
+    pass
+
+def member_in_guild(guild_id):
+    def predicate(ctx):
+        g = ctx.bot.get_guild(guild_id)
+        if g.get_member(ctx.author.id):
+            return True
+        else: raise NotInGuild(f'You are not a member of {g.name}')
+    return commands.check(predicate)
