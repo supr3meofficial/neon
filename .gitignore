@@ -1,3 +1,5 @@
+# Dev
+cogs/dev.py
 # Cached
 __pycache__/
 cogs/__pycache__/
@@ -7,6 +9,7 @@ _cache
 *.pyc
 # Local configs
 config.py
+creds.json
 # Snapshots
 neon_snapshot.py
 # venv
