@@ -363,7 +363,7 @@ class SelectionMenu:
 				await self._action_select()
 			elif self.reaction.emoji == self.EMOJI_LAST_PAGE and self.current_page != 1:
 				await self._action_back_page()
-			if self.reaction.emoji == self.EMOJI_NEXT_PAGE and self.current_page == self.total_pages:
+			elif self.reaction.emoji == self.EMOJI_NEXT_PAGE and self.current_page == self.total_pages:
 				await self._action_first_page()
 			elif self.reaction.emoji == self.EMOJI_LAST_PAGE and self.current_page == 1:
 				await self._action_last_page()
