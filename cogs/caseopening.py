@@ -264,8 +264,9 @@ class Item:
 
 	def get_random_variation(self):
 		"""Returns a random skin variation"""
-		skin_image = self.skin_wears[self._get_random_wear()]
-		skin_variation = f'{self._set_prefix()}{self.name} {self._translate_wear(self._get_random_wear())}'
+		skin_wear = self._get_random_wear()
+		skin_image = self.skin_wears[skin_wear]
+		skin_variation = f'{self._set_prefix()}{self.name} {self._translate_wear(skin_wear)}'
 		return skin_variation, skin_image
 
 	def get_rarity_colour(self):
