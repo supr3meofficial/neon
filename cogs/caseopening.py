@@ -313,14 +313,14 @@ class SelectionMenu:
 		"""Helper function that deletes the message embed with error handling"""
 		try:
 			await self.msg_embed.delete()
-		except discord.errors.NotFound or discord.errors.Forbidden:
+		except discord.HTTPException:
 			pass
 
 	async def _reaction_remove(self):
 		"""Helper function for reaction removal with error handling"""
 		try:
 			await self.reaction.remove(self.user)
-		except discord.errors.NotFound or discord.errors.Forbidden:
+		except discord.HTTPException:
 			pass
 
 	async def _action_first_page(self):
