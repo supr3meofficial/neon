@@ -389,6 +389,8 @@ class AdminTools(commands.Cog):
 			new_status = new_status.replace(_url, '')
 			new_status = new_status.replace('!user=!', '')
 
+		new_status = new_status.strip()
+
 		# Change bot presence
 		new_activity = discord.Activity(name=new_status, type=activity_type, url=url)
 		await self.bot.change_presence(status=status, activity=new_activity)

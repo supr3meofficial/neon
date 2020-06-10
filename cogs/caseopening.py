@@ -493,7 +493,7 @@ class CaseOpening(commands.Cog):
 		msg_embed = await ctx.send(embed=loading)
 
 		menu_options = [{'name'      : 'Cases',
-		 				 'thumbnail' : 'https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXU5A1PIYQNqhpOSV-fRPasw8rsRVx4MwFo5_T3eAQ3i6DMIW0X7ojiwoHax6egMOKGxj4G68Nz3-jCp4itjFWx-ktqfSmtcwqVx6sT/256fx256f',
+						 'thumbnail' : 'https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXU5A1PIYQNqhpOSV-fRPasw8rsRVx4MwFo5_T3eAQ3i6DMIW0X7ojiwoHax6egMOKGxj4G68Nz3-jCp4itjFWx-ktqfSmtcwqVx6sT/256fx256f',
 						 'command'   : self.open_case(ctx)},
 						{'name'      : 'Souvenir Packages',
 						 'thumbnail' : 'https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXU5A1PIYQNqhpOSV-fRPasw8rsVlBndFBopqiqJggu0qHLIDkS7ou3lYXdxvOsMb-GxT9Vv8F12e-SrN3ziQDmqRU5Nm_3J5jVLFGaU5xorQ/256fx256f',

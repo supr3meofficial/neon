@@ -86,13 +86,13 @@ class Fun(commands.Cog):
 	@commands.guild_only()
 	async def nani(self, ctx, member: discord.Member = None):
 		"""Nani!?"""
-		member = ctx.message.author
+		author = ctx.message.author
 		members = ctx.guild.members
 
 		if member == None:
 			member = random.choice(members)
 		embed = discord.Embed(title="", description="Omae wa mou shindeiru!")
-		embed.set_author(icon_url=member.avatar_url, name=member.name)
+		embed.set_author(icon_url=author.avatar_url, name=author.name)
 		await ctx.send(embed=embed)
 		embed = discord.Embed(title="", description="Nani!?")
 		embed.set_author(icon_url=member.avatar_url, name=member.name)
